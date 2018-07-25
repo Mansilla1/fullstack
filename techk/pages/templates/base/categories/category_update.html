@@ -1,0 +1,26 @@
+{% extends 'base_template/base.html' %}
+
+{% block content %}
+    <h3>Editar categoría</h3>
+
+
+    <form action="" method="POST"> {% csrf_token %}
+        <div class="row">
+            <div class="form-group">
+                <label for="">Nombre</label>
+                <input value="{{ category.name }}" type="text" name='name' class="form-control">
+            </div>
+        </div>
+    
+        <br>
+        <div class="row">
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-success">Guardar</button>
+            </div>
+
+            <div class="col-md-6">
+                <a href="{% url 'base:book_list' 0 %}" class="btn btn-danger">Cancelar</a>
+            </div>
+        </div>
+    </form>
+{% endblock %}

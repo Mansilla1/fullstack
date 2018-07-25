@@ -15,11 +15,21 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from apps.base.views import index
+from django.views.static import serve
+from django.conf import settings
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'', index),
-    url(r'^api-auth/', include('rest_framework.urls'))
+    # url(r'', index),
+    url(r'^api-auth/', include('rest_framework.urls')),
+    url(r'^', include('apps.base.urls', namespace='base')),
+    url(r'^scraper', include('apps.scraper.urls', namespace='scraper')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [
+            url(r'^media/(?P<path>.*)$', serve, {
+                'document_root': settings.MEDIA_ROOT,
+            }),
+        ]

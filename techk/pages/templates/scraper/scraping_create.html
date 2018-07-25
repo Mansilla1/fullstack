@@ -1,0 +1,13 @@
+{% extends 'base_template/base.html' %}
+
+{% block content %}
+
+    <form action="" method='POST'> {% csrf_token %}
+        <div class="form-group">
+            <label for="">Url padre</label>
+            <input type="text" name='url' value="{{ url }}" class="form-control" placeholder="{{ url }}">
+        </div>
+        <button type="submit" class="btn btn-success">Scraping <i class="fas fa-exclamation"></i></button>
+    </form>
+    
+{% endblock %}

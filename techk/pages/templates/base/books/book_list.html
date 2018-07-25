@@ -1,0 +1,88 @@
+{% extends 'base_template/base.html' %}
+
+{% block content %}
+    <div class="row">
+        <a href="{% url 'base:book_create' %}" class="btn btn-primary"><i class="fas fa-plus-square"></i> Nuevo libro</a>
+    </div>
+
+    <br>
+    <div class="row">
+        <table class="table" id="example" cellspacing="0" width="100%">
+            <thead class="text-primary">
+                <th>Título</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                    <tr>
+                        <td>{{ book.title|truncatewords:5 }}</td>
+                        <td>{{ book.price }}</td>
+                        <td>
+                            {% if book.stock %}
+                                <span class="badge badge-success"><i class="fas fa-check-circle"></i></span>
+                            {% else %}
+                                <span class="badge badge-danger"><i class="fas fa-times-circle"></i></span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'base:book_detail' book.id %}" class="btn btn-primary" title="Detalle libro"><i class="fas fa-info-circle"></i></a>
+                            <a href="{% url 'base:book_update' book.id %}" class="btn btn-warning" title="Editar libro"><i class="fas fa-edit"></i></a>
+                            <button class="btn btn-danger" title="Eliminar libro"><i class="far fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="row">
+            <div class="col-lg-6 col-md-offset-3">
+                <!-- Pager -->
+                <div class="text-center">
+                    <nav>
+                        <ul class="pagination">
+                            {% if books.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ books.previous_page_number }}">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% if books.number|add:'-4' > 1 %}
+                                <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{ books.number|add:'-5' }}">&hellip;</a></li>
+                            {% endif %}
+
+                            {% for i in books.paginator.page_range %}
+                                {% if books.number == i %}
+                                    <li class="active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% elif i > books.number|add:'-5' and i < books.number|add:'5'  %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if books.paginator.num_pages > books.number|add:'4' %}
+                                <li class="page-item"><a class="page-link" href="?page={{ books.number|add:'5' }}">&hellip;</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{ books.paginator.count }}">{{ books.paginator.count }}</a></li>
+                            {% endif %}
+
+                            {% if books.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ books.next_page_number }}">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Previous</span>   
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'base_template/base.html' %}
+
+{% block content %}
+    <h3>Editar libro</h3>
+
+
+    <form action="" method="POST"> {% csrf_token %}
+        <div class="row">
+            <div class="form-group">
+                <label for="">Categoría</label>
+                <select name="category" id="" class="form-control">
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="">Título</label>
+                <input value="{{ book.title }}" type="text" name='title' class="form-control" placeholder="El lago de los cisnes">
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="form-group">
+                <label for="">Descripción</label>
+                <textarea class="form-control" name="product_descripcion" id="" cols="30" rows="10">{{ book.product_description }}</textarea>
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="form-group">
+                <label for="">Portada (cargar url)</label>
+                <input value="{{ book.thumbnail }}" type="text" name='thumbnail' class="form-control">
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="form-group">
+                <label for="">Pecio</label>
+                <input value="{{ book.price }}" type="text" name='price' class="form-control">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="">stock</label>
+                <input checked type="checkbox" name='stock' class="form-control">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="">upc</label>
+                <input value="{{ book.upc }}" type="text" name='upc' class="form-control">
+            </div>
+        </div>
+    
+        <br>
+        <div class="row">
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-success">Guardar</button>
+            </div>
+
+            <div class="col-md-6">
+                <a href="{% url 'base:book_list' 0 %}" class="btn btn-danger">Cancelar</a>
+            </div>
+        </div>
+    </form>
+{% endblock %}
