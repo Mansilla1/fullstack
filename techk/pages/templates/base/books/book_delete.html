@@ -1,0 +1,9 @@
+{% extends 'base_template/base.html' %}
+
+{% block content %}
+<form action="" method="POST"> {% csrf_token %}
+    <p>¿Está seguro que desea eliminar <b>{{ book.title }}</b>?</p>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a href="javascript:window.history.back();" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
+</form>
+{% endblock %}

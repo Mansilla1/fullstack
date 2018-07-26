@@ -14,7 +14,7 @@
                 <th>Stock</th>
                 <th>Acciones</th>
             </thead>
-            <tbody>
+            <tbody id="book_list">
                 {% for book in books %}
                     <tr>
                         <td>{{ book.title|truncatewords:5 }}</td>
@@ -29,7 +29,10 @@
                         <td>
                             <a href="{% url 'base:book_detail' book.id %}" class="btn btn-primary" title="Detalle libro"><i class="fas fa-info-circle"></i></a>
                             <a href="{% url 'base:book_update' book.id %}" class="btn btn-warning" title="Editar libro"><i class="fas fa-edit"></i></a>
-                            <button class="btn btn-danger" title="Eliminar libro"><i class="far fa-trash-alt"></i></button>
+
+                            <input id="book_id" type="hidden" value="{{ book.id }}">
+                            <input id="book_title" type="hidden" value="{{ book.title }}">
+                            <a href="{% url 'base:book_delete' book.id %}" class="btn btn-danger" title="Eliminar libro" ><i class="far fa-trash-alt"></i></a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -20,8 +20,8 @@
                         <td>{{ category.name }}</td>
                         <td>
                             <a href="{% url 'base:book_list' category.pk %}" class="btn btn-primary" title="Ver libros"><i class="fas fa-book"></i></a>
-                            <a href="{% url 'base:category_update' category.pk %}" class="btn btn-warning" title="Editar categoría"><i class="fas fa-edit"></i></a>
-                            <a class="btn btn-danger" title="Eliminar categoría"><i class="far fa-trash-alt"></i></a>
+                            <a href="{% url 'base:category_update' category.id %}" class="btn btn-warning" title="Editar categoría"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'base:category_delete' category.id %}" class="btn btn-danger" title="Eliminar categoría"><i class="far fa-trash-alt"></i></a>
                         </td>
                     </tr>
                 {% endfor %}
