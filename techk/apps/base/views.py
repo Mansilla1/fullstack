@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 # importar modelo
 from .models import Category, Book
@@ -22,6 +23,14 @@ def category_list(request):
 
     # obtener categorias
     categories = Category.objects.filter(status=True)
+
+    # search!
+    search = request.GET.get('search')
+    if search:
+        qset = (Q(name__icontains=search))
+        categories = categories.filter(qset)
+    else:
+        search = ''
     
     paginator = Paginator(categories, 10)
     page = request.GET.get('page')
@@ -35,6 +44,7 @@ def category_list(request):
 
     context = {
         'categories': categories,
+        'search': search,
     }
 
     return render(request, template_name, context)
@@ -127,6 +137,17 @@ def book_list(request, category_id):
         books = Book.objects.filter(status=True)
     else:
         books = Book.objects.filter(category__id=category_id, status=True)
+
+    # search!
+    search = request.GET.get('search')
+    if search:
+        qset = (
+            Q(title__icontains=search)|
+            Q(category__name__icontains=search)
+            )
+        books = books.filter(qset)
+    else:
+        search = ''
         
     paginator = Paginator(books, 10)
     page = request.GET.get('page')
@@ -140,6 +161,7 @@ def book_list(request, category_id):
 
     context = {
         'books': books,
+        'search':search,
     }
 
     return render(request, template_name, context)
