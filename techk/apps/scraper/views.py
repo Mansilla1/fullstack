@@ -10,6 +10,7 @@ import apps.scraper.config as configuracion
 
 # importar models
 from apps.base.models import Category, Book
+from .models import ScraperBinnacle
 
 
 # metodos de scraping
@@ -62,41 +63,55 @@ def scraping_create(request):
     if request.POST:
         url = request.POST['url']
         # obtener categorías desde la página de inicio
-        get_categories(url)
-        
-        # obtener todas las urls a recorrer (por libro)
-        books_url = get_books_url(url)
+        if requests.get(url).status_code == 200:
+            # crear tarea en bitacora
+            binnacle = ScraperBinnacle.objects.create(url=url)
 
-        # recorrer cada pagina para obtener la info del libro
-        print('Recolectar datos de los libros')
-        for book in books_url:
-            print(book)
-            req = requests.get(book)
-            req.encoding = 'utf-8'
-            if req.status_code == 200:
-                soup = BeautifulSoup(req.text, "html.parser")
-                # obtener la data
-                title = soup.h1.text
-                price = soup.find('p','price_color').text
-                upc = soup.find(text='UPC').findNext('td').text
-                stock = True if 'in stock' in soup.find(text='Availability').findNext('td').text.lower() else False
-                try:
-                    thumbnail = '{}/{}'.format(url, soup.img.get('src').split('../')[-1]) # url de la imagen
-                    product_description = soup.find(id='product_description').findNext('p').text
-                except:
-                    thumbnail = None
-                    product_description = None
-                # buscar categoria
-                category_name = ' '.join(soup.find('ul', 'breadcrumb').find_all('li')[-2].text.split()).capitalize()
-                try: # si no existe, se crea una
-                    category = Category.objects.get(name=category_name)
-                except:
-                    category = Category.objects.create(name=category_name)
-                
-                # ahora, ha registrar el libro en la base de datos
-                if len(Book.objects.filter(title=title, price=price, upc=upc, category=category)) <= 0:
-                    Book.objects.create(title=title, price=price, upc=upc, category=category, product_description=product_description,
-                                thumbnail=thumbnail, stock=stock)
+            get_categories(url)
+            
+            # obtener todas las urls a recorrer (por libro)
+            books_url = get_books_url(url)
+
+            # recorrer cada pagina para obtener la info del libro
+            print('Recolectar datos de los libros')
+            for book in books_url:
+                print(book)
+                req = requests.get(book)
+                req.encoding = 'utf-8'
+                if req.status_code == 200:
+                    soup = BeautifulSoup(req.text, "html.parser")
+                    # obtener la data
+                    title = soup.h1.text
+                    price = soup.find('p','price_color').text
+                    upc = soup.find(text='UPC').findNext('td').text
+                    stock = True if 'in stock' in soup.find(text='Availability').findNext('td').text.lower() else False
+                    if stock:
+                        stock_count = soup.find(text='Availability').findNext('td').text.lower().split('(')[-1].split()[0]
+                    else:
+                        stock_count = None
+                    
+                    # thumbnail y descripcion
+                    try:
+                        thumbnail = '{}/{}'.format(url, soup.img.get('src').split('../')[-1]) # url de la imagen
+                        product_description = soup.find(id='product_description').findNext('p').text
+                    except:
+                        thumbnail = None
+                        product_description = None
+                    # buscar categoria
+                    category_name = ' '.join(soup.find('ul', 'breadcrumb').find_all('li')[-2].text.split()).capitalize()
+                    try: # si no existe, se crea una
+                        category = Category.objects.get(name=category_name)
+                    except:
+                        category = Category.objects.create(name=category_name)
+                    
+                    # ahora, ha registrar el libro en la base de datos
+                    if len(Book.objects.filter(title=title, price=price, upc=upc, category=category)) <= 0:
+                        Book.objects.create(title=title, price=price, upc=upc, category=category, product_description=product_description,
+                                    thumbnail=thumbnail, stock=stock, stock_count=stock_count)
+                        binnacle.total_data += 1
+                        binnacle.save()
+            binnacle.finished = True
+            binnacle.save()
         
         return redirect('base:category_list')
 

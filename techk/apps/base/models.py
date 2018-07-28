@@ -17,6 +17,7 @@ class Book(models.Model):
     thumbnail = models.CharField(max_length=255, blank=True, null=True)
     price = models.CharField(max_length=10)
     stock = models.BooleanField()
+    stock_count = models.IntegerField(blank=True, null=True)
     product_description = models.TextField(blank=True, null=True)
     upc = models.CharField(max_length=100)
     status = models.BooleanField(default=True)
