@@ -143,12 +143,15 @@ def category_delete(request, category_id):
 # Listar libros
 def book_list(request, category_id):
     template_name = 'base/books/book_list.html'
+    
 
     # obtener libros
     if int(category_id) == 0:
         books = Book.objects.filter(status=True)
+        category = 'All'
     else:
         books = Book.objects.filter(category__id=category_id, status=True)
+        category = Category.objects.get(pk=category_id).name
 
     # search!
     search = request.GET.get('search')
@@ -174,6 +177,7 @@ def book_list(request, category_id):
     context = {
         'books': books,
         'search':search,
+        'category': category,
     }
 
     return render(request, template_name, context)

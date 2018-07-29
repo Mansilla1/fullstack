@@ -110,3 +110,9 @@ La información obtenida por el scraper debe ser presentada en forma de tabla. E
 * Patrones de diseño
 * Orden del código
 
+
+---
+---
+## Consideraciones
+* Eliminar base de datos y ejecutar scraper para verlo en acción. La extracción tarda al rededor de 10 minutos y recolecta un total de 1050 registro.
+* Cuando se ejecuta el scraper, se crea un registro en la base de datos; en caso de que haya finalizado la ejecución, se registrará con **True** el campo **Finished** (este solamente registra la cantidad de libros almacenados en base de datos; si los registros ya se encontraban almacenados, mostrará los nuevos que se han agregado, aún así, la ejecución recorrerá uno por uno los libros y por ende, tardará el mismo tiempo que una ejecución limpia).

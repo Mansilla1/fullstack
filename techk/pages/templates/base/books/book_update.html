@@ -26,21 +26,21 @@
         <div class="row">
             <div class="form-group">
                 <label for="">Descripción</label>
-                <textarea class="form-control" name="product_descripcion" id="" cols="30" rows="10">{{ book.product_description }}</textarea>
+                <textarea class="form-control" name="product_description" id="" cols="30" rows="10">{{ book.product_description|default_if_none:"" }}</textarea>
             </div>
         </div>
     
         <div class="row">
             <div class="form-group">
                 <label for="">Portada (cargar url)</label>
-                <input value="{{ book.thumbnail }}" type="text" name='thumbnail' class="form-control">
+                <input value="{{ book.thumbnail|default_if_none:"" }}" type="text" name='thumbnail' class="form-control">
             </div>
         </div>
     
         <div class="row">
             <div class="form-group">
                 <label for="">Pecio</label>
-                <input value="{{ book.price }}" type="text" name='price' class="form-control">
+                <input value="{{ book.price|default_if_none:"" }}" type="text" name='price' class="form-control">
             </div>
         </div>
 
@@ -48,6 +48,13 @@
             <div class="form-group">
                 <label for="">stock</label>
                 <input checked type="checkbox" name='stock' class="form-control">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="">cantidad de stock</label>
+                <input type="number" name='stock_count' class="form-control" value="{{ book.stock_count|default_if_none:"" }}">
             </div>
         </div>
 

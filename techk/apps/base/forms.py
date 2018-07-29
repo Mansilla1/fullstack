@@ -13,5 +13,5 @@ class CategoryForm(forms.ModelForm):
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
-        fields = ['title', 'price', 'thumbnail', 'stock', 'product_description',
+        fields = ['title', 'price', 'thumbnail', 'stock', 'stock_count', 'product_description',
                 'upc', 'category']

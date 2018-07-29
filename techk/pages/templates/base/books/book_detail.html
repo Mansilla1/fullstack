@@ -6,7 +6,11 @@
 
     <div class="row">
         <div class="col-md-6">
-            <img class="img-fluid" src="{{ book.thumbnail }}" alt="">
+            {% if not book.thumbnail %}
+                <img class="img-fluid" src="https://cdn2.iconfinder.com/data/icons/documents-24/64/_Error_Document_Page-512.png" alt="">
+            {% else %}
+                <img class="img-fluid" src="{{ book.thumbnail }}" alt="">
+            {% endif %}
         </div>
 
         <div class="col md-6">
