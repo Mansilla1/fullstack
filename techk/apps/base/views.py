@@ -2,13 +2,25 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+
+# rest framework
+from rest_framework import viewsets
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
 
 # importar modelo
 from .models import Category, Book
 from .forms import CategoryForm, BookForm
+
+# importar serializadores
+from .serializers import CategorySerializer, BookSerializer
 
 
 # index
@@ -255,3 +267,86 @@ def book_delete(request, book_id):
     }
 
     return render(request, template_name, context)
+
+
+# -- Serializers objects
+# definir clases de serializadores
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.filter(status=True).order_by('id')
+    serializer_class = CategorySerializer
+
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.filter(status=True).order_by('id')
+    serializer_class = BookSerializer
+
+# category list
+@api_view(['GET', 'POST'])
+def rest_category_list(request):
+    if request.method == 'GET':
+        categories = Category.objects.filter(status=True)
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = CategorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# category detail
+@api_view(['GET', 'PUT', 'DELETE'])
+def rest_category_detail(request, pk):
+    try:
+        category = Category.objects.get(pk=pk)
+    except Category.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = CategorySerializer(category)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = CategorySerializer(category, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        category.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# -- books
+@api_view(['GET', 'POST'])
+def rest_book_list(request):
+    if request.method == 'GET':
+        books = Book.objects.filter(status=True)
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = BookSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# book detail
+@api_view(['GET', 'PUT', 'DELETE'])
+def rest_book_detail(request, pk):
+    try:
+        book = Book.objects.get(pk=pk)
+    except Book.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = BookSerializer(book)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = BookSerializer(book, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        book.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
